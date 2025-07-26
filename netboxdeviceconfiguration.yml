@@ -1,0 +1,51 @@
+---
+- name: Crining the vlan
+  hosts: localhost
+  gather_facts: false
+  collections:
+    - community.netbox
+
+  vars:
+    netbox_url: "https://demo.netbox.dev"
+    netbox_token: "d2f49c07c414ac03293206cecf31d2eeac01ce30"
+    validate_certs: false
+
+  tasks:
+    - name: Create Vlan
+      netbox.netbox.netbox_vlan:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        validate_certs: "{{ validate_certs }}"  
+        data:
+          name: "Management"
+          vid: 10
+          status: "active"
+          site: "DM-NYCDM-Binghamton"
+        state: present
+  tasks:
+    - name: Create Mgmt Prefix
+      netbox.netbox.netbox_prefix:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        validate_certs: "{{ validate_certs }}"
+        data:
+          prefix: "192.168.10.0/24"
+          site: "DM-Binghamton"
+          vlan: "Management"
+          status: "active"
+        state: present
+
+  
+    - name: Create IP Address
+      netbox.netbox.netbox_ipaddress:
+        netbox_url: "{{ netbox_url }}"
+        netbox_token: "{{ netbox_token }}"
+        validate_certs: "{{ validate_certs }}"
+        data:
+          address: "192.168.10.2/24"
+          status: "active"
+          assigned_object_type: "dcim.interface"
+          assigned_object:
+            name: "GigabitEthernet0/1/2"
+            device: "dmi01-binghamton-rtr01"
+        state: present
