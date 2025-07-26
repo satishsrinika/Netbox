@@ -8,7 +8,7 @@
   vars:
     netbox_url: "https://demo.netbox.dev"
     netbox_token: "d2f49c07c414ac03293206cecf31d2eeac01ce30"
-    validate_certs: false
+  
 
   tasks:
     - name: Create Vlan
